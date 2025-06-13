@@ -1,0 +1,4 @@
+run_address: "localhost:8080"
+database_uri: "postgres://postgres:postgres@localhost:5432/gophermart?sslmode=disable"
+accrual_system_address: "http://localhost:8081"
+jwt_secret: "jwt-secret"

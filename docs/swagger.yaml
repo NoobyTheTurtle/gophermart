@@ -1,0 +1,133 @@
+basePath: /
+definitions:
+  github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_request.Auth:
+    properties:
+      login:
+        example: user
+        type: string
+      password:
+        example: password
+        type: string
+    required:
+    - login
+    - password
+    type: object
+  github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Auth:
+    properties:
+      token:
+        example: token
+        type: string
+    required:
+    - token
+    type: object
+  github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error:
+    properties:
+      error:
+        example: message
+        type: string
+    required:
+    - error
+    type: object
+  github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Ping:
+    properties:
+      status:
+        example: ok
+        type: string
+    required:
+    - status
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API для накопительной системы лояльности «Гофермарт»
+  title: Gophermart API
+  version: "1.0"
+paths:
+  /api/user/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user with login and password
+      parameters:
+      - description: User credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_request.Auth'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Auth'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error'
+      summary: Login user
+      tags:
+      - Auth
+  /api/user/register:
+    post:
+      consumes:
+      - application/json
+      description: Register new user with login and password
+      parameters:
+      - description: User credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_request.Auth'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Auth'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error'
+      summary: Register user
+      tags:
+      - Auth
+  /ping:
+    get:
+      description: Check if the service is alive
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Ping'
+      summary: Health check
+      tags:
+      - Health
+securityDefinitions:
+  Bearer:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
