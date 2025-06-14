@@ -1,6 +1,9 @@
 package entity
 
-import "time"
+import (
+	"errors"
+	"time"
+)
 
 type UserBalance struct {
 	UserID    int       `json:"user_id" db:"user_id"`
@@ -8,3 +11,5 @@ type UserBalance struct {
 	Withdrawn float64   `json:"withdrawn" db:"withdrawn"`
 	UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
 }
+
+var ErrBalanceNotFound = errors.New("balance not found")

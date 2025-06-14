@@ -5,12 +5,10 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
-	_ "github.com/NoobyTheTurtle/gophermart/docs" // swagger docs
 	"github.com/NoobyTheTurtle/gophermart/internal/controller/http/middleware"
-	"github.com/NoobyTheTurtle/gophermart/internal/usecase/auth"
 )
 
-func NewRouter(authUseCase auth.AuthUseCase) *gin.Engine {
+func New(authUseCase AuthUseCase, orderUseCase OrderUseCase, balanceUseCase BalanceUseCase) *gin.Engine {
 	router := gin.New()
 	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
@@ -27,7 +25,8 @@ func NewRouter(authUseCase auth.AuthUseCase) *gin.Engine {
 		protected := apiV1.Group("")
 		protected.Use(middleware.AuthMiddleware(authUseCase))
 		{
-			// TODO: Add protected routes like orders, balance, etc.
+			newOrderRoutes(protected, orderUseCase)
+			newBalanceRoutes(protected, balanceUseCase)
 		}
 	}
 

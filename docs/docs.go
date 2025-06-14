@@ -15,6 +15,43 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/user/balance": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get current balance and total withdrawn amount",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Balance"
+                ],
+                "summary": "Get user balance",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Balance"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error"
+                        }
+                    }
+                }
+            }
+        },
         "/api/user/login": {
             "post": {
                 "description": "Authenticate user with login and password",
@@ -54,6 +91,116 @@ const docTemplate = `{
                     },
                     "401": {
                         "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/orders": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get list of user's uploaded orders with statuses and accruals",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Get user orders",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Order"
+                            }
+                        }
+                    },
+                    "204": {
+                        "description": "No orders found"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Upload order number for loyalty points calculation",
+                "consumes": [
+                    "text/plain"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Upload order number",
+                "parameters": [
+                    {
+                        "description": "Order number",
+                        "name": "order",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Order already uploaded by this user"
+                    },
+                    "202": {
+                        "description": "New order accepted for processing"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
                         "schema": {
                             "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error"
                         }
@@ -170,6 +317,23 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Balance": {
+            "type": "object",
+            "required": [
+                "current",
+                "withdrawn"
+            ],
+            "properties": {
+                "current": {
+                    "type": "number",
+                    "example": 100
+                },
+                "withdrawn": {
+                    "type": "number",
+                    "example": 10
+                }
+            }
+        },
         "github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error": {
             "type": "object",
             "required": [
@@ -179,6 +343,37 @@ const docTemplate = `{
                 "error": {
                     "type": "string",
                     "example": "message"
+                }
+            }
+        },
+        "github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Order": {
+            "type": "object",
+            "required": [
+                "accrual",
+                "number",
+                "status",
+                "uploaded_at"
+            ],
+            "properties": {
+                "accrual": {
+                    "type": "number",
+                    "example": 100
+                },
+                "number": {
+                    "type": "string",
+                    "example": "1234567890"
+                },
+                "status": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_entity.OrderStatus"
+                        }
+                    ],
+                    "example": "NEW"
+                },
+                "uploaded_at": {
+                    "type": "string",
+                    "example": "2021-01-01T00:00:00Z"
                 }
             }
         },
@@ -193,6 +388,21 @@ const docTemplate = `{
                     "example": "ok"
                 }
             }
+        },
+        "github_com_NoobyTheTurtle_gophermart_internal_entity.OrderStatus": {
+            "type": "string",
+            "enum": [
+                "NEW",
+                "PROCESSING",
+                "INVALID",
+                "PROCESSED"
+            ],
+            "x-enum-varnames": [
+                "OrderStatusNew",
+                "OrderStatusProcessing",
+                "OrderStatusInvalid",
+                "OrderStatusProcessed"
+            ]
         }
     },
     "securityDefinitions": {

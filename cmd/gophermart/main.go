@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 
+	_ "github.com/NoobyTheTurtle/gophermart/docs"
 	"github.com/NoobyTheTurtle/gophermart/internal/app"
 )
 

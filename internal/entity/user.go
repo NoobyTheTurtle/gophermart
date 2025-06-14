@@ -1,6 +1,9 @@
 package entity
 
-import "time"
+import (
+	"errors"
+	"time"
+)
 
 type User struct {
 	ID           int       `json:"id" db:"id"`
@@ -8,3 +11,5 @@ type User struct {
 	PasswordHash string    `json:"-" db:"password_hash"`
 	CreatedAt    time.Time `json:"created_at" db:"created_at"`
 }
+
+var ErrUserNotFound = errors.New("user not found")

@@ -1,6 +1,9 @@
 package entity
 
-import "time"
+import (
+	"errors"
+	"time"
+)
 
 type OrderStatus string
 
@@ -19,3 +22,10 @@ type Order struct {
 	Accrual    float64     `json:"accrual,omitempty" db:"accrual"`
 	UploadedAt time.Time   `json:"uploaded_at" db:"uploaded_at"`
 }
+
+var (
+	ErrInvalidOrderNumber              = errors.New("invalid order number")
+	ErrOrderAlreadyExists              = errors.New("order already exists")
+	ErrOrderAlreadyExistsByAnotherUser = errors.New("order already exists by another user")
+	ErrOrderNotFound                   = errors.New("order not found")
+)

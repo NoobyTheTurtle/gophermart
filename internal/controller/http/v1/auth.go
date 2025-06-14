@@ -9,14 +9,13 @@ import (
 	"github.com/NoobyTheTurtle/gophermart/internal/controller/http/v1/request"
 	"github.com/NoobyTheTurtle/gophermart/internal/controller/http/v1/response"
 	"github.com/NoobyTheTurtle/gophermart/internal/entity"
-	"github.com/NoobyTheTurtle/gophermart/internal/usecase/auth"
 )
 
 type authRoutes struct {
-	authUseCase auth.AuthUseCase
+	authUseCase AuthUseCase
 }
 
-func newAuthRoutes(g *gin.RouterGroup, authUseCase auth.AuthUseCase) {
+func newAuthRoutes(g *gin.RouterGroup, authUseCase AuthUseCase) {
 	r := &authRoutes{
 		authUseCase: authUseCase,
 	}
@@ -40,7 +39,7 @@ func newAuthRoutes(g *gin.RouterGroup, authUseCase auth.AuthUseCase) {
 func (r *authRoutes) register(c *gin.Context) {
 	var req request.Auth
 	if err := c.ShouldBindJSON(&req); err != nil {
-		errorResponse(c, http.StatusBadRequest, "invalid request format")
+		response.ErrorResponse(c, http.StatusBadRequest, "invalid request format")
 		return
 	}
 
@@ -51,11 +50,11 @@ func (r *authRoutes) register(c *gin.Context) {
 
 	token, err := r.authUseCase.Register(c.Request.Context(), authData)
 	if err != nil {
-		if errors.Is(err, auth.ErrUserAlreadyExists) {
-			errorResponse(c, http.StatusConflict, "login already taken")
+		if errors.Is(err, entity.ErrUserAlreadyExists) {
+			response.ErrorResponse(c, http.StatusConflict, "login already taken")
 			return
 		}
-		errorResponse(c, http.StatusInternalServerError, "internal server error")
+		response.ErrorResponse(c, http.StatusInternalServerError, "internal server error")
 		return
 	}
 
@@ -78,7 +77,7 @@ func (r *authRoutes) register(c *gin.Context) {
 func (r *authRoutes) login(c *gin.Context) {
 	var req request.Auth
 	if err := c.ShouldBindJSON(&req); err != nil {
-		errorResponse(c, http.StatusBadRequest, "invalid request format")
+		response.ErrorResponse(c, http.StatusBadRequest, "invalid request format")
 		return
 	}
 
@@ -89,11 +88,11 @@ func (r *authRoutes) login(c *gin.Context) {
 
 	token, err := r.authUseCase.Login(c.Request.Context(), authData)
 	if err != nil {
-		if errors.Is(err, auth.ErrInvalidCredentials) {
-			errorResponse(c, http.StatusUnauthorized, "invalid login/password pair")
+		if errors.Is(err, entity.ErrInvalidCredentials) {
+			response.ErrorResponse(c, http.StatusUnauthorized, "invalid login/password pair")
 			return
 		}
-		errorResponse(c, http.StatusInternalServerError, "internal server error")
+		response.ErrorResponse(c, http.StatusInternalServerError, "internal server error")
 		return
 	}
 

@@ -54,10 +54,10 @@ func (s *JWTService) ValidateToken(tokenString string) (int, error) {
 		return 0, ErrInvalidToken
 	}
 
-	userID, ok := claims["user_id"].(int)
+	userID, ok := claims["user_id"].(float64)
 	if !ok {
 		return 0, ErrInvalidToken
 	}
 
-	return userID, nil
+	return int(userID), nil
 }

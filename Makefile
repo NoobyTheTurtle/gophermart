@@ -104,7 +104,7 @@ migrate-create:
 
 .PHONY: migrate-reset
 migrate-reset:
-	@echo "Resetting database (down all + up all)..."
+	@echo "Resetting database..."
 	@goose -dir migrations postgres "$(DATABASE_DSN)" reset
 
 .PHONY: deps

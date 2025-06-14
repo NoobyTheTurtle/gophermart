@@ -20,6 +20,18 @@ definitions:
     required:
     - token
     type: object
+  github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Balance:
+    properties:
+      current:
+        example: 100
+        type: number
+      withdrawn:
+        example: 10
+        type: number
+    required:
+    - current
+    - withdrawn
+    type: object
   github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error:
     properties:
       error:
@@ -27,6 +39,27 @@ definitions:
         type: string
     required:
     - error
+    type: object
+  github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Order:
+    properties:
+      accrual:
+        example: 100
+        type: number
+      number:
+        example: "1234567890"
+        type: string
+      status:
+        allOf:
+        - $ref: '#/definitions/github_com_NoobyTheTurtle_gophermart_internal_entity.OrderStatus'
+        example: NEW
+      uploaded_at:
+        example: "2021-01-01T00:00:00Z"
+        type: string
+    required:
+    - accrual
+    - number
+    - status
+    - uploaded_at
     type: object
   github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Ping:
     properties:
@@ -36,6 +69,18 @@ definitions:
     required:
     - status
     type: object
+  github_com_NoobyTheTurtle_gophermart_internal_entity.OrderStatus:
+    enum:
+    - NEW
+    - PROCESSING
+    - INVALID
+    - PROCESSED
+    type: string
+    x-enum-varnames:
+    - OrderStatusNew
+    - OrderStatusProcessing
+    - OrderStatusInvalid
+    - OrderStatusProcessed
 host: localhost:8080
 info:
   contact: {}
@@ -43,6 +88,29 @@ info:
   title: Gophermart API
   version: "1.0"
 paths:
+  /api/user/balance:
+    get:
+      description: Get current balance and total withdrawn amount
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Balance'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error'
+      security:
+      - Bearer: []
+      summary: Get user balance
+      tags:
+      - Balance
   /api/user/login:
     post:
       consumes:
@@ -77,6 +145,76 @@ paths:
       summary: Login user
       tags:
       - Auth
+  /api/user/orders:
+    get:
+      description: Get list of user's uploaded orders with statuses and accruals
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Order'
+            type: array
+        "204":
+          description: No orders found
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error'
+      security:
+      - Bearer: []
+      summary: Get user orders
+      tags:
+      - Orders
+    post:
+      consumes:
+      - text/plain
+      description: Upload order number for loyalty points calculation
+      parameters:
+      - description: Order number
+        in: body
+        name: order
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Order already uploaded by this user
+        "202":
+          description: New order accepted for processing
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error'
+      security:
+      - Bearer: []
+      summary: Upload order number
+      tags:
+      - Orders
   /api/user/register:
     post:
       consumes:

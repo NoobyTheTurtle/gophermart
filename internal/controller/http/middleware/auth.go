@@ -7,7 +7,6 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/NoobyTheTurtle/gophermart/internal/controller/http/v1/response"
-	"github.com/NoobyTheTurtle/gophermart/internal/usecase/auth"
 )
 
 const (
@@ -16,18 +15,18 @@ const (
 	userIDCtxKey        = "userID"
 )
 
-func AuthMiddleware(authUseCase auth.AuthUseCase) gin.HandlerFunc {
+func AuthMiddleware(authUseCase AuthUseCase) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := extractToken(c)
 		if token == "" {
-			c.JSON(http.StatusUnauthorized, response.Error{Error: "authentication required"})
+			response.ErrorResponse(c, http.StatusUnauthorized, "authentication required")
 			c.Abort()
 			return
 		}
 
 		userID, err := authUseCase.ValidateToken(token)
 		if err != nil {
-			c.JSON(http.StatusUnauthorized, response.Error{Error: "invalid token"})
+			response.ErrorResponse(c, http.StatusUnauthorized, "invalid token")
 			c.Abort()
 			return
 		}

@@ -11,9 +11,15 @@ import (
 
 	"github.com/NoobyTheTurtle/gophermart/config"
 	v1 "github.com/NoobyTheTurtle/gophermart/internal/controller/http/v1"
-	"github.com/NoobyTheTurtle/gophermart/internal/repo/postgres/user"
-	"github.com/NoobyTheTurtle/gophermart/internal/usecase/auth"
+	balanceRepo "github.com/NoobyTheTurtle/gophermart/internal/repo/postgres/balance"
+	orderRepo "github.com/NoobyTheTurtle/gophermart/internal/repo/postgres/order"
+	userRepo "github.com/NoobyTheTurtle/gophermart/internal/repo/postgres/user"
+	authUseCase "github.com/NoobyTheTurtle/gophermart/internal/usecase/auth"
+	balanceUseCase "github.com/NoobyTheTurtle/gophermart/internal/usecase/balance"
+	orderUseCase "github.com/NoobyTheTurtle/gophermart/internal/usecase/order"
 	"github.com/NoobyTheTurtle/gophermart/pkg/jwt"
+	"github.com/NoobyTheTurtle/gophermart/pkg/luhn"
+	"github.com/NoobyTheTurtle/gophermart/pkg/password"
 	"github.com/NoobyTheTurtle/gophermart/pkg/postgres"
 )
 
@@ -32,14 +38,20 @@ func Run(ctx context.Context) {
 
 	// Initialize services
 	tokenService := jwt.New(cfg.JWTSecret, time.Hour*24)
+	passwordService := password.New(password.DefaultCost)
+	luhnService := luhn.New()
 
 	// Initialize repositories
-	userRepo := user.New(db)
+	userRepo := userRepo.New(db)
+	orderRepo := orderRepo.New(db)
+	balanceRepo := balanceRepo.New(db)
 
 	// Initialize use cases
-	authUseCase := auth.New(userRepo, tokenService)
+	authUseCaseImpl := authUseCase.New(userRepo, tokenService, passwordService)
+	balanceUseCaseImpl := balanceUseCase.New(balanceRepo)
+	orderUseCaseImpl := orderUseCase.New(orderRepo, balanceRepo, luhnService)
 
-	router := v1.NewRouter(authUseCase)
+	router := v1.New(authUseCaseImpl, orderUseCaseImpl, balanceUseCaseImpl)
 
 	server := &http.Server{
 		Addr:    cfg.RunAddress,
