@@ -6,22 +6,22 @@ import (
 	"time"
 )
 
-type Coordinator struct {
+type coordinator struct {
 	accrualUseCase  AccrualUseCase
 	logger          Logger
 	processInterval time.Duration
-	orderCh         chan<- *OrderTask
+	orderCh         chan<- *orderTask
 	stopCh          <-chan struct{}
 }
 
-func NewCoordinator(
+func newCoordinator(
 	accrualUseCase AccrualUseCase,
 	logger Logger,
 	processInterval time.Duration,
-	orderCh chan<- *OrderTask,
+	orderCh chan<- *orderTask,
 	stopCh <-chan struct{},
-) *Coordinator {
-	return &Coordinator{
+) *coordinator {
+	return &coordinator{
 		accrualUseCase:  accrualUseCase,
 		logger:          logger,
 		processInterval: processInterval,
@@ -30,7 +30,7 @@ func NewCoordinator(
 	}
 }
 
-func (c *Coordinator) Start(ctx context.Context, wg *sync.WaitGroup) {
+func (c *coordinator) Start(ctx context.Context, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	c.logger.Info("Coordinator started")
@@ -51,7 +51,7 @@ func (c *Coordinator) Start(ctx context.Context, wg *sync.WaitGroup) {
 	}
 }
 
-func (c *Coordinator) fetchAndDistributeOrders(ctx context.Context) {
+func (c *coordinator) fetchAndDistributeOrders(ctx context.Context) {
 	orders, err := c.accrualUseCase.GetOrdersForProcessing(ctx)
 	if err != nil {
 		c.logger.Error("Coordinator: failed to get orders for processing", "error", err)
@@ -65,7 +65,7 @@ func (c *Coordinator) fetchAndDistributeOrders(ctx context.Context) {
 	c.logger.Info("Coordinator: distributing orders to workers", "count", len(orders))
 
 	for _, order := range orders {
-		task := &OrderTask{
+		task := &orderTask{
 			Order:   order,
 			Attempt: 1,
 		}

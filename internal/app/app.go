@@ -21,7 +21,7 @@ import (
 	balanceUseCase "github.com/NoobyTheTurtle/gophermart/internal/usecase/balance"
 	orderUseCase "github.com/NoobyTheTurtle/gophermart/internal/usecase/order"
 	withdrawalUseCase "github.com/NoobyTheTurtle/gophermart/internal/usecase/withdrawal"
-	accrualManager "github.com/NoobyTheTurtle/gophermart/internal/worker/accrual"
+	accrualWorker "github.com/NoobyTheTurtle/gophermart/internal/worker/accrual"
 	"github.com/NoobyTheTurtle/gophermart/pkg/jwt"
 	"github.com/NoobyTheTurtle/gophermart/pkg/logger"
 	"github.com/NoobyTheTurtle/gophermart/pkg/luhn"
@@ -79,9 +79,9 @@ func Run(ctx context.Context) {
 	)
 
 	// Initialize workers
-	accrualManagerImpl := accrualManager.NewAccrualManager(accrualUseCaseImpl, zapLogger, cfg.WorkerCount, cfg.ProcessInterval)
+	accrualWorkerImpl := accrualWorker.New(accrualUseCaseImpl, zapLogger, cfg.WorkerCount, cfg.ProcessInterval)
 
-	accrualManagerImpl.Start(ctx)
+	accrualWorkerImpl.Start(ctx)
 
 	router := v1.New(authUseCaseImpl, orderUseCaseImpl, balanceUseCaseImpl, withdrawalUseCaseImpl, zapLogger)
 
@@ -103,7 +103,7 @@ func Run(ctx context.Context) {
 
 	zapLogger.Info("Received shutdown signal, starting graceful shutdown...")
 
-	accrualManagerImpl.Stop()
+	accrualWorkerImpl.Stop()
 
 	ctxWithTimeout, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()

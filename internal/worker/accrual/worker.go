@@ -10,24 +10,24 @@ import (
 	customErrors "github.com/NoobyTheTurtle/gophermart/internal/entity/errors"
 )
 
-type Worker struct {
+type worker struct {
 	id             int
 	accrualUseCase AccrualUseCase
 	logger         Logger
 	maxRetries     int
-	orderCh        chan *OrderTask
+	orderCh        chan *orderTask
 	stopCh         <-chan struct{}
 }
 
-func NewWorker(
+func newWorker(
 	id int,
 	accrualUseCase AccrualUseCase,
 	logger Logger,
 	maxRetries int,
-	orderCh chan *OrderTask,
+	orderCh chan *orderTask,
 	stopCh <-chan struct{},
-) *Worker {
-	return &Worker{
+) *worker {
+	return &worker{
 		id:             id,
 		accrualUseCase: accrualUseCase,
 		logger:         logger,
@@ -37,7 +37,7 @@ func NewWorker(
 	}
 }
 
-func (w *Worker) Start(ctx context.Context, wg *sync.WaitGroup) {
+func (w *worker) Start(ctx context.Context, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	w.logger.Info("Worker started", "id", w.id)
@@ -60,7 +60,7 @@ func (w *Worker) Start(ctx context.Context, wg *sync.WaitGroup) {
 	}
 }
 
-func (w *Worker) processOrderTask(ctx context.Context, task *OrderTask) {
+func (w *worker) processOrderTask(ctx context.Context, task *orderTask) {
 	order := task.Order
 
 	w.logger.Info("Worker: processing order", "id", w.id, "order", order.Number, "attempt", task.Attempt)
@@ -86,7 +86,7 @@ func (w *Worker) processOrderTask(ctx context.Context, task *OrderTask) {
 	w.logger.Info("Worker: order processed successfully", "id", w.id, "order", order.Number)
 }
 
-func (w *Worker) handleRetry(ctx context.Context, task *OrderTask, retryAfter time.Duration) {
+func (w *worker) handleRetry(ctx context.Context, task *orderTask, retryAfter time.Duration) {
 	if task.Attempt >= w.maxRetries {
 		w.logger.Info("Worker: max retries exceeded for order", "id", w.id, "order", task.Order.Number)
 		return
@@ -98,7 +98,7 @@ func (w *Worker) handleRetry(ctx context.Context, task *OrderTask, retryAfter ti
 
 		select {
 		case <-timer.C:
-			retryTask := &OrderTask{
+			retryTask := &orderTask{
 				Order:   task.Order,
 				Attempt: task.Attempt + 1,
 			}

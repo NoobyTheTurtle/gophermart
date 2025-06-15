@@ -4,14 +4,7 @@ import (
 	"context"
 	"sync"
 	"time"
-
-	"github.com/NoobyTheTurtle/gophermart/internal/entity"
 )
-
-type OrderTask struct {
-	Order   *entity.Order
-	Attempt int
-}
 
 type AccrualManager struct {
 	accrualUseCase  AccrualUseCase
@@ -20,16 +13,16 @@ type AccrualManager struct {
 	processInterval time.Duration
 	maxRetries      int
 
-	orderCh chan *OrderTask
+	orderCh chan *orderTask
 	stopCh  chan struct{}
 	wg      sync.WaitGroup
 
-	coordinator *Coordinator
-	workers     []*Worker
+	coordinator *coordinator
+	workers     []*worker
 }
 
-func NewAccrualManager(accrualUseCase AccrualUseCase, logger Logger, workerCount int, processInterval int) *AccrualManager {
-	orderCh := make(chan *OrderTask, workerCount*2)
+func New(accrualUseCase AccrualUseCase, logger Logger, workerCount int, processInterval int) *AccrualManager {
+	orderCh := make(chan *orderTask, workerCount*2)
 	stopCh := make(chan struct{})
 
 	am := &AccrualManager{
@@ -42,7 +35,7 @@ func NewAccrualManager(accrualUseCase AccrualUseCase, logger Logger, workerCount
 		stopCh:          stopCh,
 	}
 
-	am.coordinator = NewCoordinator(
+	am.coordinator = newCoordinator(
 		accrualUseCase,
 		logger,
 		am.processInterval,
@@ -50,9 +43,9 @@ func NewAccrualManager(accrualUseCase AccrualUseCase, logger Logger, workerCount
 		stopCh,
 	)
 
-	am.workers = make([]*Worker, workerCount)
+	am.workers = make([]*worker, workerCount)
 	for i := range workerCount {
-		am.workers[i] = NewWorker(
+		am.workers[i] = newWorker(
 			i,
 			accrualUseCase,
 			logger,
