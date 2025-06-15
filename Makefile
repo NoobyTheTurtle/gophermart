@@ -120,17 +120,38 @@ generate-swagger:
 	@echo "Generating swagger documentation..."
 	@swag init -g cmd/gophermart/main.go -o docs --parseDependency --parseInternal
 
+.PHONY: test
+test:
+	@echo "Running tests..."
+	@go test -count=1 ./...
+
+.PHONY: test-verbose
+test-verbose:
+	@echo "Running tests with verbose output..."
+	@go test -v -count=1 ./...
+
 .PHONY: help
 help:
 	@echo "Available commands:"
+	@echo ""
+	@echo "Development:"
 	@echo "  make generate            - Run go generate"
 	@echo "  make generate-mocks      - Regenerate all mocks"
-	@echo "  make build-gophermart    - Build gophermart service"
-	@echo "  make run-gophermart      - Run gophermart service"
-	@echo "  make run-accrual         - Run accrual system"
 	@echo "  make fmt                 - Format code"
 	@echo "  make mod-tidy            - Tidy up modules"
 	@echo "  make mod-download        - Download modules"
+	@echo "  make deps                - Install development dependencies"
+	@echo ""
+	@echo "Build & Run:"
+	@echo "  make build-gophermart    - Build gophermart service"
+	@echo "  make run-gophermart      - Run gophermart service"
+	@echo "  make run-accrual         - Run accrual system"
+	@echo ""
+	@echo "Testing:"
+	@echo "  make test                - Run all tests"
+	@echo "  make test-verbose        - Run tests with verbose output"
+	@echo ""
+	@echo "Database:"
 	@echo "  make postgres            - Start PostgreSQL in Docker"
 	@echo "  make postgres-stop       - Stop and remove PostgreSQL Docker container"
 	@echo "  make postgres-logs       - Show PostgreSQL logs"
@@ -139,6 +160,7 @@ help:
 	@echo "  make migrate-down        - Run database migrations down"
 	@echo "  make migrate-status      - Check migration status"
 	@echo "  make migrate-create      - Create new migration (NAME=your_migration_name)"
-	@echo "  make migrate-reset       - Reset database (down all + up all)"
-	@echo "  make deps                - Install development dependencies"
+	@echo "  make migrate-reset       - Reset database"
+	@echo ""
+	@echo "Documentation:"
 	@echo "  make generate-swagger    - Generate swagger documentation"
