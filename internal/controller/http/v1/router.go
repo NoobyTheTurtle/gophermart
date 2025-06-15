@@ -8,7 +8,7 @@ import (
 	"github.com/NoobyTheTurtle/gophermart/internal/controller/http/middleware"
 )
 
-func New(authUseCase AuthUseCase, orderUseCase OrderUseCase, balanceUseCase BalanceUseCase, logger Logger) *gin.Engine {
+func New(authUseCase AuthUseCase, orderUseCase OrderUseCase, balanceUseCase BalanceUseCase, withdrawalUseCase WithdrawalUseCase, logger Logger) *gin.Engine {
 	router := gin.New()
 	router.Use(gin.Recovery())
 	router.Use(middleware.LoggingMiddleware(logger))
@@ -27,6 +27,7 @@ func New(authUseCase AuthUseCase, orderUseCase OrderUseCase, balanceUseCase Bala
 		{
 			newOrderRoutes(protected, orderUseCase, logger)
 			newBalanceRoutes(protected, balanceUseCase, logger)
+			newWithdrawalRoutes(protected, withdrawalUseCase, logger)
 		}
 	}
 

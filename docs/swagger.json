@@ -46,6 +46,72 @@
                 }
             }
         },
+        "/api/user/balance/withdraw": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Request withdrawal of loyalty points for order payment",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Withdrawal"
+                ],
+                "summary": "Process withdrawal",
+                "parameters": [
+                    {
+                        "description": "Withdrawal request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_request.Withdrawal"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Withdrawal processed successfully"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error"
+                        }
+                    },
+                    "402": {
+                        "description": "Payment Required",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error"
+                        }
+                    }
+                }
+            }
+        },
         "/api/user/login": {
             "post": {
                 "description": "Authenticate user with login and password",
@@ -260,6 +326,49 @@
                 }
             }
         },
+        "/api/user/withdrawals": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get list of user's withdrawals sorted by processing time desc",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Withdrawal"
+                ],
+                "summary": "Get user withdrawals",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Withdrawal"
+                            }
+                        }
+                    },
+                    "204": {
+                        "description": "No withdrawals found"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error"
+                        }
+                    }
+                }
+            }
+        },
         "/ping": {
             "get": {
                 "description": "Check if the service is alive",
@@ -296,6 +405,23 @@
                 "password": {
                     "type": "string",
                     "example": "password"
+                }
+            }
+        },
+        "github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_request.Withdrawal": {
+            "type": "object",
+            "required": [
+                "order",
+                "sum"
+            ],
+            "properties": {
+                "order": {
+                    "type": "string",
+                    "example": "2377225624"
+                },
+                "sum": {
+                    "type": "number",
+                    "example": 751
                 }
             }
         },
@@ -379,6 +505,28 @@
                 "status": {
                     "type": "string",
                     "example": "ok"
+                }
+            }
+        },
+        "github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Withdrawal": {
+            "type": "object",
+            "required": [
+                "order",
+                "processed_at",
+                "sum"
+            ],
+            "properties": {
+                "order": {
+                    "type": "string",
+                    "example": "2377225624"
+                },
+                "processed_at": {
+                    "type": "string",
+                    "example": "2020-12-09T16:09:57+03:00"
+                },
+                "sum": {
+                    "type": "number",
+                    "example": 500
                 }
             }
         },

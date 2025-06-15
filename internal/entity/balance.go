@@ -12,4 +12,7 @@ type UserBalance struct {
 	UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
 }
 
-var ErrBalanceNotFound = errors.New("balance not found")
+var (
+	ErrBalanceNotFound   = errors.New("balance not found")
+	ErrInsufficientFunds = errors.New("insufficient funds")
+)

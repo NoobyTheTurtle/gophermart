@@ -7,6 +7,7 @@ import (
 	"github.com/NoobyTheTurtle/gophermart/internal/usecase/auth"
 	"github.com/NoobyTheTurtle/gophermart/internal/usecase/balance"
 	"github.com/NoobyTheTurtle/gophermart/internal/usecase/order"
+	"github.com/NoobyTheTurtle/gophermart/internal/usecase/withdrawal"
 	"github.com/NoobyTheTurtle/gophermart/pkg/logger"
 )
 
@@ -37,3 +38,10 @@ type AuthUseCase interface {
 }
 
 var _ AuthUseCase = (*auth.AuthUseCaseImpl)(nil)
+
+type WithdrawalUseCase interface {
+	ProcessWithdrawal(ctx context.Context, userID int, orderNumber string, sum float64) error
+	GetUserWithdrawals(ctx context.Context, userID int) ([]*entity.Withdrawal, error)
+}
+
+var _ WithdrawalUseCase = (*withdrawal.WithdrawalUseCaseImpl)(nil)

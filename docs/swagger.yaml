@@ -12,6 +12,18 @@ definitions:
     - login
     - password
     type: object
+  github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_request.Withdrawal:
+    properties:
+      order:
+        example: "2377225624"
+        type: string
+      sum:
+        example: 751
+        type: number
+    required:
+    - order
+    - sum
+    type: object
   github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Auth:
     properties:
       token:
@@ -68,6 +80,22 @@ definitions:
     required:
     - status
     type: object
+  github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Withdrawal:
+    properties:
+      order:
+        example: "2377225624"
+        type: string
+      processed_at:
+        example: "2020-12-09T16:09:57+03:00"
+        type: string
+      sum:
+        example: 500
+        type: number
+    required:
+    - order
+    - processed_at
+    - sum
+    type: object
   github_com_NoobyTheTurtle_gophermart_internal_entity.OrderStatus:
     enum:
     - NEW
@@ -110,6 +138,48 @@ paths:
       summary: Get user balance
       tags:
       - Balance
+  /api/user/balance/withdraw:
+    post:
+      consumes:
+      - application/json
+      description: Request withdrawal of loyalty points for order payment
+      parameters:
+      - description: Withdrawal request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_request.Withdrawal'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Withdrawal processed successfully
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error'
+        "402":
+          description: Payment Required
+          schema:
+            $ref: '#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error'
+      security:
+      - Bearer: []
+      summary: Process withdrawal
+      tags:
+      - Withdrawal
   /api/user/login:
     post:
       consumes:
@@ -248,6 +318,33 @@ paths:
       summary: Register user
       tags:
       - Auth
+  /api/user/withdrawals:
+    get:
+      description: Get list of user's withdrawals sorted by processing time desc
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Withdrawal'
+            type: array
+        "204":
+          description: No withdrawals found
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error'
+      security:
+      - Bearer: []
+      summary: Get user withdrawals
+      tags:
+      - Withdrawal
   /ping:
     get:
       description: Check if the service is alive

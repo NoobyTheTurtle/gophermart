@@ -15,10 +15,12 @@ import (
 	balanceRepo "github.com/NoobyTheTurtle/gophermart/internal/repo/postgres/balance"
 	orderRepo "github.com/NoobyTheTurtle/gophermart/internal/repo/postgres/order"
 	userRepo "github.com/NoobyTheTurtle/gophermart/internal/repo/postgres/user"
+	withdrawalRepo "github.com/NoobyTheTurtle/gophermart/internal/repo/postgres/withdrawal"
 	accrualUseCase "github.com/NoobyTheTurtle/gophermart/internal/usecase/accrual"
 	authUseCase "github.com/NoobyTheTurtle/gophermart/internal/usecase/auth"
 	balanceUseCase "github.com/NoobyTheTurtle/gophermart/internal/usecase/balance"
 	orderUseCase "github.com/NoobyTheTurtle/gophermart/internal/usecase/order"
+	withdrawalUseCase "github.com/NoobyTheTurtle/gophermart/internal/usecase/withdrawal"
 	accrualManager "github.com/NoobyTheTurtle/gophermart/internal/worker/accrual"
 	"github.com/NoobyTheTurtle/gophermart/pkg/jwt"
 	"github.com/NoobyTheTurtle/gophermart/pkg/logger"
@@ -63,11 +65,13 @@ func Run(ctx context.Context) {
 	userRepo := userRepo.New(db)
 	orderRepo := orderRepo.New(db)
 	balanceRepo := balanceRepo.New(db)
+	withdrawalRepo := withdrawalRepo.New(db)
 
 	// Initialize use cases
 	authUseCaseImpl := authUseCase.New(userRepo, tokenService, passwordService)
 	balanceUseCaseImpl := balanceUseCase.New(balanceRepo)
 	orderUseCaseImpl := orderUseCase.New(orderRepo, balanceRepo, luhnService)
+	withdrawalUseCaseImpl := withdrawalUseCase.New(withdrawalRepo, balanceRepo, luhnService)
 	accrualUseCaseImpl := accrualUseCase.New(
 		accrualAPIImpl,
 		orderRepo,
@@ -79,7 +83,7 @@ func Run(ctx context.Context) {
 
 	accrualManagerImpl.Start(ctx)
 
-	router := v1.New(authUseCaseImpl, orderUseCaseImpl, balanceUseCaseImpl, zapLogger)
+	router := v1.New(authUseCaseImpl, orderUseCaseImpl, balanceUseCaseImpl, withdrawalUseCaseImpl, zapLogger)
 
 	server := &http.Server{
 		Addr:    cfg.RunAddress,

@@ -20,7 +20,7 @@ func New(db *sqlx.DB) *OrderPostgresRepo {
 }
 
 func (r *OrderPostgresRepo) CreateOrder(ctx context.Context, order *entity.Order) error {
-	err := r.db.QueryRowContext(ctx, createOrderQuery, order.UserID, order.Number, order.Status, order.UploadedAt).Scan(&order.ID)
+	err := r.db.QueryRowxContext(ctx, createOrderQuery, order.UserID, order.Number, order.Status, order.UploadedAt).Scan(&order.ID)
 	if err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) && pgErr.Code == "23505" {
