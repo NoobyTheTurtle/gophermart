@@ -13,11 +13,13 @@ import (
 
 type authRoutes struct {
 	authUseCase AuthUseCase
+	logger      Logger
 }
 
-func newAuthRoutes(g *gin.RouterGroup, authUseCase AuthUseCase) {
+func newAuthRoutes(g *gin.RouterGroup, authUseCase AuthUseCase, logger Logger) {
 	r := &authRoutes{
 		authUseCase: authUseCase,
+		logger:      logger,
 	}
 
 	g.POST("/register", r.register)
@@ -54,6 +56,7 @@ func (r *authRoutes) register(c *gin.Context) {
 			response.ErrorResponse(c, http.StatusConflict, "login already taken")
 			return
 		}
+		r.logger.Error("Failed to register user", "login", req.Login, "error", err)
 		response.ErrorResponse(c, http.StatusInternalServerError, "internal server error")
 		return
 	}
@@ -92,6 +95,7 @@ func (r *authRoutes) login(c *gin.Context) {
 			response.ErrorResponse(c, http.StatusUnauthorized, "invalid login/password pair")
 			return
 		}
+		r.logger.Error("Failed to login user", "login", req.Login, "error", err)
 		response.ErrorResponse(c, http.StatusInternalServerError, "internal server error")
 		return
 	}

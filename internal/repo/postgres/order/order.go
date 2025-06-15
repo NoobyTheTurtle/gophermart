@@ -26,7 +26,7 @@ func (r *OrderPostgresRepo) CreateOrder(ctx context.Context, order *entity.Order
 		if errors.As(err, &pgErr) && pgErr.Code == "23505" {
 			return entity.ErrOrderAlreadyExists
 		}
-		return fmt.Errorf("orderRepo.CreateOrder: failed to create order: %w", err)
+		return fmt.Errorf("repo - postgres - order - CreateOrder: failed to create order: %w", err)
 	}
 
 	return nil
@@ -40,7 +40,7 @@ func (r *OrderPostgresRepo) GetOrderByNumber(ctx context.Context, number string)
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, entity.ErrOrderNotFound
 		}
-		return nil, fmt.Errorf("orderRepo.GetOrderByNumber: failed to get order by number: %w", err)
+		return nil, fmt.Errorf("repo - postgres - order - GetOrderByNumber: failed to get order by number: %w", err)
 	}
 
 	return order, nil
@@ -51,7 +51,7 @@ func (r *OrderPostgresRepo) GetOrdersByUserID(ctx context.Context, userID int) (
 
 	err := r.db.SelectContext(ctx, &orders, getOrdersByUserIDQuery, userID)
 	if err != nil {
-		return nil, fmt.Errorf("orderRepo.GetOrdersByUserID: failed to get orders by user ID: %w", err)
+		return nil, fmt.Errorf("repo - postgres - order - GetOrdersByUserID: failed to get orders by user ID: %w", err)
 	}
 
 	return orders, nil
@@ -60,7 +60,7 @@ func (r *OrderPostgresRepo) GetOrdersByUserID(ctx context.Context, userID int) (
 func (r *OrderPostgresRepo) UpdateOrderStatus(ctx context.Context, number string, status entity.OrderStatus, accrual float64) error {
 	_, err := r.db.ExecContext(ctx, updateOrderStatusQuery, status, accrual, number)
 	if err != nil {
-		return fmt.Errorf("orderRepo.UpdateOrderStatus: failed to update order status: %w", err)
+		return fmt.Errorf("repo - postgres - order - UpdateOrderStatus: failed to update order status: %w", err)
 	}
 
 	return nil
@@ -71,7 +71,7 @@ func (r *OrderPostgresRepo) GetOrdersForProcessing(ctx context.Context) ([]*enti
 
 	err := r.db.SelectContext(ctx, &orders, getOrdersForProcessingQuery)
 	if err != nil {
-		return nil, fmt.Errorf("orderRepo.GetOrdersForProcessing: failed to get orders for processing: %w", err)
+		return nil, fmt.Errorf("repo - postgres - order - GetOrdersForProcessing: failed to get orders for processing: %w", err)
 	}
 
 	return orders, nil

@@ -42,21 +42,21 @@ func (s *JWTService) ValidateToken(tokenString string) (int, error) {
 		return s.secret, nil
 	})
 	if err != nil {
-		return 0, ErrInvalidToken
+		return 0, err
 	}
 
 	if !token.Valid {
-		return 0, ErrInvalidToken
+		return 0, ErrValidateToken
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
-		return 0, ErrInvalidToken
+		return 0, ErrGetClaims
 	}
 
 	userID, ok := claims["user_id"].(float64)
 	if !ok {
-		return 0, ErrInvalidToken
+		return 0, ErrGetUserID
 	}
 
 	return int(userID), nil

@@ -8,11 +8,11 @@ import (
 	"github.com/NoobyTheTurtle/gophermart/internal/controller/http/middleware"
 )
 
-func New(authUseCase AuthUseCase, orderUseCase OrderUseCase, balanceUseCase BalanceUseCase) *gin.Engine {
+func New(authUseCase AuthUseCase, orderUseCase OrderUseCase, balanceUseCase BalanceUseCase, logger Logger) *gin.Engine {
 	router := gin.New()
-	router.Use(gin.Logger())
 	router.Use(gin.Recovery())
-	router.Use(middleware.GzipMiddleware())
+	router.Use(middleware.LoggingMiddleware(logger))
+	router.Use(middleware.GzipMiddleware(logger))
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
@@ -20,13 +20,13 @@ func New(authUseCase AuthUseCase, orderUseCase OrderUseCase, balanceUseCase Bala
 
 	apiV1 := router.Group("/api/user")
 	{
-		newAuthRoutes(apiV1, authUseCase)
+		newAuthRoutes(apiV1, authUseCase, logger)
 
 		protected := apiV1.Group("")
 		protected.Use(middleware.AuthMiddleware(authUseCase))
 		{
-			newOrderRoutes(protected, orderUseCase)
-			newBalanceRoutes(protected, balanceUseCase)
+			newOrderRoutes(protected, orderUseCase, logger)
+			newBalanceRoutes(protected, balanceUseCase, logger)
 		}
 	}
 

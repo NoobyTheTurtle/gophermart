@@ -349,7 +349,6 @@ const docTemplate = `{
         "github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Order": {
             "type": "object",
             "required": [
-                "accrual",
                 "number",
                 "status",
                 "uploaded_at"
@@ -418,7 +417,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:8080",
+	Host:             "localhost:8081",
 	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "Gophermart API",

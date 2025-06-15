@@ -56,7 +56,6 @@ definitions:
         example: "2021-01-01T00:00:00Z"
         type: string
     required:
-    - accrual
     - number
     - status
     - uploaded_at
@@ -81,7 +80,7 @@ definitions:
     - OrderStatusProcessing
     - OrderStatusInvalid
     - OrderStatusProcessed
-host: localhost:8080
+host: localhost:8081
 info:
   contact: {}
   description: API для накопительной системы лояльности «Гофермарт»

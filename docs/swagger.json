@@ -6,7 +6,7 @@
         "contact": {},
         "version": "1.0"
     },
-    "host": "localhost:8080",
+    "host": "localhost:8081",
     "basePath": "/",
     "paths": {
         "/api/user/balance": {
@@ -343,7 +343,6 @@
         "github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Order": {
             "type": "object",
             "required": [
-                "accrual",
                 "number",
                 "status",
                 "uploaded_at"

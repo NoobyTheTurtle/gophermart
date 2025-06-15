@@ -30,7 +30,7 @@ func (a *AuthUseCaseImpl) Register(ctx context.Context, auth *entity.Auth) (stri
 
 	hashedPassword, err := a.passwordService.Hash(auth.Password)
 	if err != nil {
-		return "", fmt.Errorf("authUseCase.Register: failed to hash password: %w", err)
+		return "", fmt.Errorf("usecase - auth - Register: failed to hash password: %w", err)
 	}
 
 	user := &entity.User{
@@ -40,12 +40,12 @@ func (a *AuthUseCaseImpl) Register(ctx context.Context, auth *entity.Auth) (stri
 	}
 
 	if err = a.userRepo.CreateUser(ctx, user); err != nil {
-		return "", fmt.Errorf("authUseCase.Register: failed to create user: %w", err)
+		return "", fmt.Errorf("usecase - auth - Register: failed to create user: %w", err)
 	}
 
 	token, err := a.tokenService.GenerateToken(user.ID)
 	if err != nil {
-		return "", fmt.Errorf("authUseCase.Register: failed to generate token: %w", err)
+		return "", fmt.Errorf("usecase - auth - Register: failed to generate token: %w", err)
 	}
 
 	return token, nil
@@ -63,7 +63,7 @@ func (a *AuthUseCaseImpl) Login(ctx context.Context, auth *entity.Auth) (string,
 
 	token, err := a.tokenService.GenerateToken(user.ID)
 	if err != nil {
-		return "", fmt.Errorf("authUseCase.Login: failed to generate token: %w", err)
+		return "", fmt.Errorf("usecase - auth - Login: failed to generate token: %w", err)
 	}
 
 	return token, nil

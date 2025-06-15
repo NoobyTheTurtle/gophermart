@@ -11,11 +11,13 @@ import (
 
 type balanceRoutes struct {
 	balanceUseCase BalanceUseCase
+	logger         Logger
 }
 
-func newBalanceRoutes(g *gin.RouterGroup, balanceUseCase BalanceUseCase) {
+func newBalanceRoutes(g *gin.RouterGroup, balanceUseCase BalanceUseCase, logger Logger) {
 	r := &balanceRoutes{
 		balanceUseCase: balanceUseCase,
+		logger:         logger,
 	}
 
 	g.GET("/balance", r.getUserBalance)
@@ -40,6 +42,7 @@ func (r *balanceRoutes) getUserBalance(c *gin.Context) {
 
 	balance, err := r.balanceUseCase.GetUserBalance(c.Request.Context(), userID)
 	if err != nil {
+		r.logger.Error("Failed to get user balance", "userID", userID, "error", err)
 		response.ErrorResponse(c, http.StatusInternalServerError, "internal server error")
 		return
 	}

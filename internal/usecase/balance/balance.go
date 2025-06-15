@@ -24,7 +24,7 @@ func (uc *BalanceUseCaseImpl) GetUserBalance(ctx context.Context, userID int) (*
 	if err != nil {
 		if errors.Is(err, entity.ErrBalanceNotFound) {
 			if createErr := uc.balanceRepo.CreateBalance(ctx, userID); createErr != nil {
-				return nil, fmt.Errorf("balanceUseCase.GetUserBalance: failed to create balance: %w", createErr)
+				return nil, fmt.Errorf("usecase - balance - GetUserBalance: failed to create balance: %w", createErr)
 			}
 			return &entity.UserBalance{
 				UserID:    userID,
@@ -33,7 +33,7 @@ func (uc *BalanceUseCaseImpl) GetUserBalance(ctx context.Context, userID int) (*
 				UpdatedAt: time.Now(),
 			}, nil
 		}
-		return nil, fmt.Errorf("balanceUseCase.GetUserBalance: failed to get user balance: %w", err)
+		return nil, fmt.Errorf("usecase - balance - GetUserBalance: failed to get user balance: %w", err)
 	}
 
 	return userBalance, nil

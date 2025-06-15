@@ -1,6 +1,7 @@
 GOPHERMART_DIR = ./cmd/gophermart
 ACCRUAL_DIR = ./cmd/accrual
 GOPHERMART_BIN = $(GOPHERMART_DIR)/gophermart
+ACCRUAL_BIN = $(ACCRUAL_DIR)/accrual_darwin_arm64
 
 DATABASE_DSN ?= postgres://postgres:postgres@localhost:5432/gophermart?sslmode=disable
 

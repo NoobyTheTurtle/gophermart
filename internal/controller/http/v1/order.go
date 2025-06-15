@@ -15,11 +15,13 @@ import (
 
 type orderRoutes struct {
 	orderUseCase OrderUseCase
+	logger       Logger
 }
 
-func newOrderRoutes(g *gin.RouterGroup, orderUseCase OrderUseCase) {
+func newOrderRoutes(g *gin.RouterGroup, orderUseCase OrderUseCase, logger Logger) {
 	r := &orderRoutes{
 		orderUseCase: orderUseCase,
+		logger:       logger,
 	}
 
 	g.POST("/orders", r.uploadOrder)
@@ -74,6 +76,7 @@ func (r *orderRoutes) uploadOrder(c *gin.Context) {
 			c.Status(http.StatusOK)
 			return
 		default:
+			r.logger.Error("Failed to upload order", "userID", userID, "orderNumber", orderNumber, "error", err)
 			response.ErrorResponse(c, http.StatusInternalServerError, "internal server error")
 			return
 		}
@@ -102,6 +105,7 @@ func (r *orderRoutes) getUserOrders(c *gin.Context) {
 
 	orders, err := r.orderUseCase.GetUserOrders(c.Request.Context(), userID)
 	if err != nil {
+		r.logger.Error("Failed to get user orders", "userID", userID, "error", err)
 		response.ErrorResponse(c, http.StatusInternalServerError, "internal server error")
 		return
 	}

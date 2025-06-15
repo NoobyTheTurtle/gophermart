@@ -30,7 +30,7 @@ func (uc *OrderUseCaseImpl) UploadOrder(ctx context.Context, userID int, orderNu
 
 	existingOrder, err := uc.orderRepo.GetOrderByNumber(ctx, orderNumber)
 	if err != nil && !errors.Is(err, entity.ErrOrderNotFound) {
-		return fmt.Errorf("orderUseCase.UploadOrder: failed to check order existence: %w", err)
+		return fmt.Errorf("usecase - order - UploadOrder: failed to check order existence: %w", err)
 	}
 
 	if existingOrder != nil {
@@ -48,11 +48,11 @@ func (uc *OrderUseCaseImpl) UploadOrder(ctx context.Context, userID int, orderNu
 	}
 
 	if err := uc.orderRepo.CreateOrder(ctx, newOrder); err != nil {
-		return fmt.Errorf("orderUseCase.UploadOrder: failed to create order: %w", err)
+		return fmt.Errorf("usecase - order - UploadOrder: failed to create order: %w", err)
 	}
 
 	if err := uc.balanceRepo.CreateBalance(ctx, userID); err != nil {
-		return fmt.Errorf("orderUseCase.UploadOrder: failed to create balance: %w", err)
+		return fmt.Errorf("usecase - order - UploadOrder: failed to create balance: %w", err)
 	}
 
 	return nil
@@ -61,7 +61,7 @@ func (uc *OrderUseCaseImpl) UploadOrder(ctx context.Context, userID int, orderNu
 func (uc *OrderUseCaseImpl) GetUserOrders(ctx context.Context, userID int) ([]*entity.Order, error) {
 	orders, err := uc.orderRepo.GetOrdersByUserID(ctx, userID)
 	if err != nil {
-		return nil, fmt.Errorf("orderUseCase.GetUserOrders: failed to get user orders: %w", err)
+		return nil, fmt.Errorf("usecase - order - GetUserOrders: failed to get user orders: %w", err)
 	}
 
 	return orders, nil

@@ -13,6 +13,8 @@ type Config struct {
 	DatabaseURI          string `mapstructure:"database_uri"`
 	AccrualSystemAddress string `mapstructure:"accrual_system_address"`
 	JWTSecret            string `mapstructure:"jwt_secret"`
+	WorkerCount          int    `mapstructure:"worker_count"`
+	ProcessInterval      int    `mapstructure:"process_interval"`
 }
 
 func New() *Config {
@@ -64,20 +66,22 @@ func setupEnv(v *viper.Viper) {
 	v.BindEnv("database_uri", "DATABASE_URI")
 	v.BindEnv("accrual_system_address", "ACCRUAL_SYSTEM_ADDRESS")
 	v.BindEnv("jwt_secret", "JWT_SECRET")
+	v.BindEnv("worker_count", "WORKER_COUNT")
+	v.BindEnv("process_interval", "PROCESS_INTERVAL")
 }
 
 func validateConfig(cfg *Config) error {
 	if cfg.RunAddress == "" {
-		return fmt.Errorf("run_address is required")
+		return fmt.Errorf("config - validateConfig: run_address is required")
 	}
 	if cfg.DatabaseURI == "" {
-		return fmt.Errorf("database_uri is required")
+		return fmt.Errorf("config - validateConfig: database_uri is required")
 	}
 	if cfg.AccrualSystemAddress == "" {
-		return fmt.Errorf("accrual_system_address is required")
+		return fmt.Errorf("config - validateConfig: accrual_system_address is required")
 	}
 	if cfg.JWTSecret == "" {
-		return fmt.Errorf("jwt_secret is required")
+		return fmt.Errorf("config - validateConfig: jwt_secret is required")
 	}
 	return nil
 }

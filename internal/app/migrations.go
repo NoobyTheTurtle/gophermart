@@ -9,11 +9,11 @@ import (
 
 func runMigrations(db *sql.DB) error {
 	if err := goose.SetDialect("postgres"); err != nil {
-		return fmt.Errorf("failed to set goose dialect: %w", err)
+		return fmt.Errorf("app - runMigrations: failed to set dialect: %w", err)
 	}
 
 	if err := goose.Up(db, "migrations"); err != nil {
-		return fmt.Errorf("failed to run migrations: %w", err)
+		return fmt.Errorf("app - runMigrations: failed to run migrations: %w", err)
 	}
 
 	return nil

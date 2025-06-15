@@ -21,7 +21,7 @@ func New(db *sqlx.DB) *UserPostgresRepo {
 func (r *UserPostgresRepo) CreateUser(ctx context.Context, user *entity.User) error {
 	err := r.db.QueryRowContext(ctx, createUserQuery, user.Login, user.PasswordHash, user.CreatedAt).Scan(&user.ID)
 	if err != nil {
-		return fmt.Errorf("userRepo.CreateUser: failed to create user: %w", err)
+		return fmt.Errorf("repo - postgres - user - CreateUser: failed to create user: %w", err)
 	}
 
 	return nil
@@ -35,7 +35,7 @@ func (r *UserPostgresRepo) GetUserByLogin(ctx context.Context, login string) (*e
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, entity.ErrUserNotFound
 		}
-		return nil, fmt.Errorf("userRepo.GetUserByLogin: failed to get user by login: %w", err)
+		return nil, fmt.Errorf("repo - postgres - user - GetUserByLogin: failed to get user by login: %w", err)
 	}
 
 	return user, nil
@@ -49,7 +49,7 @@ func (r *UserPostgresRepo) GetUserByID(ctx context.Context, id int) (*entity.Use
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, entity.ErrUserNotFound
 		}
-		return nil, fmt.Errorf("userRepo.GetUserByID: failed to get user by ID: %w", err)
+		return nil, fmt.Errorf("repo - postgres - user - GetUserByID: failed to get user by ID: %w", err)
 	}
 
 	return user, nil

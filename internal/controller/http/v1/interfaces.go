@@ -7,7 +7,15 @@ import (
 	"github.com/NoobyTheTurtle/gophermart/internal/usecase/auth"
 	"github.com/NoobyTheTurtle/gophermart/internal/usecase/balance"
 	"github.com/NoobyTheTurtle/gophermart/internal/usecase/order"
+	"github.com/NoobyTheTurtle/gophermart/pkg/logger"
 )
+
+type Logger interface {
+	Info(message string, args ...any)
+	Error(message string, args ...any)
+}
+
+var _ Logger = (*logger.ZapLogger)(nil)
 
 type OrderUseCase interface {
 	UploadOrder(ctx context.Context, userID int, orderNumber string) error

@@ -11,7 +11,7 @@ import (
 // @version         1.0
 // @description     API для накопительной системы лояльности «Гофермарт»
 
-// @host      localhost:8080
+// @host      localhost:8081
 // @BasePath  /
 
 // @securityDefinitions.apikey Bearer

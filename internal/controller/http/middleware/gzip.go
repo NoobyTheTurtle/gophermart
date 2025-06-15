@@ -38,7 +38,7 @@ func shouldCompress(r *http.Request, contentType string) bool {
 	return false
 }
 
-func GzipMiddleware() gin.HandlerFunc {
+func GzipMiddleware(logger Logger) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if c.Request.Header.Get("Content-Encoding") == "gzip" {
 			reader, err := gzip.NewReader(c.Request.Body)
@@ -63,7 +63,8 @@ func GzipMiddleware() gin.HandlerFunc {
 
 		gz, err := gzip.NewWriterLevel(c.Writer, gzip.BestSpeed)
 		if err != nil {
-			c.String(http.StatusInternalServerError, err.Error())
+			logger.Error("Failed to create gzip writer", "error", err)
+			c.String(http.StatusInternalServerError, "internal server error")
 			c.Abort()
 			return
 		}

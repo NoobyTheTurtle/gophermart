@@ -28,8 +28,10 @@ func New(ctx context.Context, databaseURI string) (*sqlx.DB, error) {
 	return db, nil
 }
 
-func Close(db *sqlx.DB) {
+func Close(db *sqlx.DB) error {
 	if db != nil {
-		db.Close()
+		return db.Close()
 	}
+
+	return nil
 }
