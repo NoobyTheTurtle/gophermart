@@ -6,6 +6,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/NoobyTheTurtle/gophermart/internal/entity"
 	customErrors "github.com/NoobyTheTurtle/gophermart/internal/entity/errors"
 )
 
@@ -70,6 +71,11 @@ func (w *Worker) processOrderTask(ctx context.Context, task *OrderTask) {
 		if errors.As(err, &rateLimitErr) {
 			w.logger.Info("Worker: rate limit hit for order, retrying after", "id", w.id, "order", order.Number, "retryAfter", rateLimitErr.RetryAfter, "attempt", task.Attempt)
 			w.handleRetry(ctx, task, rateLimitErr.RetryAfter)
+			return
+		}
+
+		if errors.Is(err, entity.ErrOrderNotFound) {
+			w.logger.Info("Worker: order not found, skipping", "id", w.id, "order", order.Number)
 			return
 		}
 
