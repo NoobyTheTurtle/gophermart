@@ -9,9 +9,7 @@ type ZapLogger struct {
 }
 
 func New() (*ZapLogger, error) {
-	var cfg zap.Config
-
-	cfg = zap.NewDevelopmentConfig()
+	cfg := zap.NewDevelopmentConfig()
 	cfg.DisableCaller = true
 
 	l, err := cfg.Build()
