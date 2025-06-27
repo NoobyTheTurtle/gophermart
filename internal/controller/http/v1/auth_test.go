@@ -198,7 +198,9 @@ func TestAuthRoutes_login(t *testing.T) {
 			assert.JSONEq(t, tc.expectedResponseBody, w.Body.String())
 
 			if tc.expectedStatusCode == http.StatusOK {
-				cookie := w.Result().Cookies()[0]
+				res := w.Result()
+				defer res.Body.Close()
+				cookie := res.Cookies()[0]
 				assert.Equal(t, "token", cookie.Name)
 				assert.Equal(t, "test-token", cookie.Value)
 			}
