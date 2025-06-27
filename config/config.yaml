@@ -4,3 +4,4 @@ accrual_system_address: "http://localhost:8080"
 jwt_secret: "jwt-secret"
 worker_count: 3
 process_interval: 10
+shutdown_timeout: "5s"

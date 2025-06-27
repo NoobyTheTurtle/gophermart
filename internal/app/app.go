@@ -105,13 +105,13 @@ func Run(ctx context.Context) {
 
 	accrualWorkerImpl.Stop()
 
-	ctxWithTimeout, cancel := context.WithTimeout(ctx, 5*time.Second)
+	ctxWithTimeout, cancel := context.WithTimeout(ctx, cfg.ShutdownTimeout)
 	defer cancel()
 
 	if err := server.Shutdown(ctxWithTimeout); err != nil {
 		zapLogger.Error("Server forced to shutdown",
 			"error", err,
-			"timeout", "5s")
+			"timeout", cfg.ShutdownTimeout.String())
 	} else {
 		zapLogger.Info("Server exited gracefully")
 	}

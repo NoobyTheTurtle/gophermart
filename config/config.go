@@ -3,18 +3,20 @@ package config
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
 
 type Config struct {
-	RunAddress           string `mapstructure:"run_address"`
-	DatabaseURI          string `mapstructure:"database_uri"`
-	AccrualSystemAddress string `mapstructure:"accrual_system_address"`
-	JWTSecret            string `mapstructure:"jwt_secret"`
-	WorkerCount          int    `mapstructure:"worker_count"`
-	ProcessInterval      int    `mapstructure:"process_interval"`
+	RunAddress           string        `mapstructure:"run_address"`
+	DatabaseURI          string        `mapstructure:"database_uri"`
+	AccrualSystemAddress string        `mapstructure:"accrual_system_address"`
+	JWTSecret            string        `mapstructure:"jwt_secret"`
+	WorkerCount          int           `mapstructure:"worker_count"`
+	ProcessInterval      int           `mapstructure:"process_interval"`
+	ShutdownTimeout      time.Duration `mapstructure:"shutdown_timeout"`
 }
 
 func New() *Config {
@@ -68,6 +70,7 @@ func setupEnv(v *viper.Viper) {
 	v.BindEnv("jwt_secret", "JWT_SECRET")
 	v.BindEnv("worker_count", "WORKER_COUNT")
 	v.BindEnv("process_interval", "PROCESS_INTERVAL")
+	v.BindEnv("shutdown_timeout", "SHUTDOWN_TIMEOUT")
 }
 
 func validateConfig(cfg *Config) error {
@@ -82,6 +85,15 @@ func validateConfig(cfg *Config) error {
 	}
 	if cfg.JWTSecret == "" {
 		return fmt.Errorf("config - validateConfig: jwt_secret is required")
+	}
+	if cfg.WorkerCount == 0 {
+		return fmt.Errorf("config - validateConfig: worker_count is required")
+	}
+	if cfg.ProcessInterval == 0 {
+		return fmt.Errorf("config - validateConfig: process_interval is required")
+	}
+	if cfg.ShutdownTimeout == 0 {
+		return fmt.Errorf("config - validateConfig: shutdown_timeout is required")
 	}
 	return nil
 }
