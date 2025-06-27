@@ -1,0 +1,557 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "API для накопительной системы лояльности «Гофермарт»",
+        "title": "Gophermart API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8081",
+    "basePath": "/",
+    "paths": {
+        "/api/user/balance": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get current balance and total withdrawn amount",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Balance"
+                ],
+                "summary": "Get user balance",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Balance"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/balance/withdraw": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Request withdrawal of loyalty points for order payment",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Withdrawal"
+                ],
+                "summary": "Process withdrawal",
+                "parameters": [
+                    {
+                        "description": "Withdrawal request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_request.Withdrawal"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Withdrawal processed successfully"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error"
+                        }
+                    },
+                    "402": {
+                        "description": "Payment Required",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/login": {
+            "post": {
+                "description": "Authenticate user with login and password",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login user",
+                "parameters": [
+                    {
+                        "description": "User credentials",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_request.Auth"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Auth"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/orders": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get list of user's uploaded orders with statuses and accruals",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Get user orders",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Order"
+                            }
+                        }
+                    },
+                    "204": {
+                        "description": "No orders found"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Upload order number for loyalty points calculation",
+                "consumes": [
+                    "text/plain"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Upload order number",
+                "parameters": [
+                    {
+                        "description": "Order number",
+                        "name": "order",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Order already uploaded by this user"
+                    },
+                    "202": {
+                        "description": "New order accepted for processing"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/register": {
+            "post": {
+                "description": "Register new user with login and password",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Register user",
+                "parameters": [
+                    {
+                        "description": "User credentials",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_request.Auth"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Auth"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/withdrawals": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get list of user's withdrawals sorted by processing time desc",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Withdrawal"
+                ],
+                "summary": "Get user withdrawals",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Withdrawal"
+                            }
+                        }
+                    },
+                    "204": {
+                        "description": "No withdrawals found"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/ping": {
+            "get": {
+                "description": "Check if the service is alive",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Health"
+                ],
+                "summary": "Health check",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Ping"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_request.Auth": {
+            "type": "object",
+            "required": [
+                "login",
+                "password"
+            ],
+            "properties": {
+                "login": {
+                    "type": "string",
+                    "example": "user"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "password"
+                }
+            }
+        },
+        "github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_request.Withdrawal": {
+            "type": "object",
+            "required": [
+                "order",
+                "sum"
+            ],
+            "properties": {
+                "order": {
+                    "type": "string",
+                    "example": "2377225624"
+                },
+                "sum": {
+                    "type": "number",
+                    "example": 751
+                }
+            }
+        },
+        "github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Auth": {
+            "type": "object",
+            "required": [
+                "token"
+            ],
+            "properties": {
+                "token": {
+                    "type": "string",
+                    "example": "token"
+                }
+            }
+        },
+        "github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Balance": {
+            "type": "object",
+            "required": [
+                "current",
+                "withdrawn"
+            ],
+            "properties": {
+                "current": {
+                    "type": "number",
+                    "example": 100
+                },
+                "withdrawn": {
+                    "type": "number",
+                    "example": 10
+                }
+            }
+        },
+        "github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Error": {
+            "type": "object",
+            "required": [
+                "error"
+            ],
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "message"
+                }
+            }
+        },
+        "github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Order": {
+            "type": "object",
+            "required": [
+                "number",
+                "status",
+                "uploaded_at"
+            ],
+            "properties": {
+                "accrual": {
+                    "type": "number",
+                    "example": 100
+                },
+                "number": {
+                    "type": "string",
+                    "example": "1234567890"
+                },
+                "status": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_NoobyTheTurtle_gophermart_internal_entity.OrderStatus"
+                        }
+                    ],
+                    "example": "NEW"
+                },
+                "uploaded_at": {
+                    "type": "string",
+                    "example": "2021-01-01T00:00:00Z"
+                }
+            }
+        },
+        "github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Ping": {
+            "type": "object",
+            "required": [
+                "status"
+            ],
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "example": "ok"
+                }
+            }
+        },
+        "github_com_NoobyTheTurtle_gophermart_internal_controller_http_v1_response.Withdrawal": {
+            "type": "object",
+            "required": [
+                "order",
+                "processed_at",
+                "sum"
+            ],
+            "properties": {
+                "order": {
+                    "type": "string",
+                    "example": "2377225624"
+                },
+                "processed_at": {
+                    "type": "string",
+                    "example": "2020-12-09T16:09:57+03:00"
+                },
+                "sum": {
+                    "type": "number",
+                    "example": 500
+                }
+            }
+        },
+        "github_com_NoobyTheTurtle_gophermart_internal_entity.OrderStatus": {
+            "type": "string",
+            "enum": [
+                "NEW",
+                "PROCESSING",
+                "INVALID",
+                "PROCESSED"
+            ],
+            "x-enum-varnames": [
+                "OrderStatusNew",
+                "OrderStatusProcessing",
+                "OrderStatusInvalid",
+                "OrderStatusProcessed"
+            ]
+        }
+    },
+    "securityDefinitions": {
+        "Bearer": {
+            "description": "Type \"Bearer\" followed by a space and JWT token.",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}

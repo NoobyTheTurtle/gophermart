@@ -21,3 +21,7 @@ vendor/
 # IDEs directories
 .idea
 .vscode
+.history
+
+# Temporary files
+tmp/
